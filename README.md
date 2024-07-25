@@ -18,13 +18,23 @@ sudo mv kops-linux-amd64 /usr/local/bin/kops
 kops --version 
 ```
 
-### 1. Configure AWS Provider
+### Git Clone
 
-Define the AWS provider and set the region to `ap-south-1`:
 ```bash
 git clone https://github.com/pankajthakur888/kops.git
 ```
-# Create the Kops cluster
+
+### Apply the Terraform Configuration
+
+Run the following commands to apply your Terraform configuration:
+
+```bash
+terraform init
+terraform validate
+terraform apply
+```
+
+### Create the Kops cluster
 
 Make the script executable and run it:
 ```bash
@@ -38,7 +48,7 @@ chmod +x kops_install.sh
 
  kubectl get node
 ```
-# Delete the Kops cluster and VPC
+### Delete the Kops cluster and VPC
 
 ```bash
  kops delete cluster   --name=kops.indojeans.in   --state=s3://kops-indojeans-state-store --yes
