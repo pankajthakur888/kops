@@ -1,6 +1,4 @@
-# Terraform Kops Cluster Setup
-
-![image](https://github.com/user-attachments/assets/b1352af0-cce8-46df-9673-8a2d4d1d7bc4) + ![image](https://github.com/user-attachments/assets/d410d855-0cc1-447f-af0e-6f68a546577a) + ![image](https://github.com/user-attachments/assets/25f8a3ef-a562-4d80-a0d8-d066aa0b6827)
+# Terraform Kops Cluster Setup ![image](https://github.com/user-attachments/assets/d410d855-0cc1-447f-af0e-6f68a546577a)
 
 
 ## Prerequisites
