@@ -19,14 +19,12 @@ kops --version
 
 Define the AWS provider and set the region to `ap-south-1`:
 
-git clone 
+git clone https://github.com/pankajthakur888/kops.git
 
 export KOPS_STATE_STORE=s3://kops-indojeans-state-store
 11. Create Kops Cluster
 Fetch the VPC ID and Subnet IDs using Terraform and create the Kops cluster:
 
-bash
-Copy code
 #!/bin/bash
 
 export KOPS_STATE_STORE=s3://kops-indojeans-state-store
@@ -49,8 +47,8 @@ kops create cluster \
 
 Make the script executable and run it:
 
-chmod +x create_kops_cluster.sh
-./create_kops_cluster.sh
+chmod +x kops_install.sh
+./kops_install.sh
 
  kops update cluster --name=kops.indojeans.in --state=s3://kops-indojeans-state-store --yes --admin
 
