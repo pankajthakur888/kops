@@ -22,6 +22,8 @@ kops --version
 
 ```bash
 git clone https://github.com/pankajthakur888/kops.git
+
+cd kops
 ```
 
 ### Apply the Terraform Configuration
