@@ -8,7 +8,7 @@ Before you begin, make sure you have the following installed:
 - [Kops](https://github.com/kubernetes/kops)
   
 ## Setup
-
+```bash
 curl -LO https://github.com/kubernetes/kops/releases/download/$(curl -s https://api.github.com/repos/kubernetes/kops/releases/latest | grep tag_name | cut -d '"' -f 4)/kops-linux-amd64
 
 chmod +x kops-linux-amd64
@@ -16,18 +16,18 @@ chmod +x kops-linux-amd64
 sudo mv kops-linux-amd64 /usr/local/bin/kops
 
 kops --version 
-
+```
 
 ### 1. Configure AWS Provider
 
 Define the AWS provider and set the region to `ap-south-1`:
-
+```bash
 git clone https://github.com/pankajthakur888/kops.git
-
+```
 # Create the Kops cluster
 
 Make the script executable and run it:
-
+```bash
 chmod +x kops_install.sh
 
 ./kops_install.sh
@@ -37,9 +37,11 @@ chmod +x kops_install.sh
  kops validate cluster --name=kops.indojeans.in --state=s3://kops-indojeans-state-store
 
  kubectl get node
+```
+# Delete the Kops cluster and VPC
 
-# Delete the Kops cluster
-
+```bash
  kops delete cluster   --name=kops.indojeans.in   --state=s3://kops-indojeans-state-store --yes
 
  terraform destroy
+```
