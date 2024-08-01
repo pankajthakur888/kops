@@ -4,7 +4,8 @@ export KOPS_STATE_STORE=s3://kops-indojeans-state-store
 
 # Fetch VPC ID and Subnet IDs using Terraform
 VPC_ID=$(terraform output -json vpc_id | jq -r .)
-SUBNET_IDS=$(terraform output -json subnet_ids | jq -r '.[]' | paste -sd, -)
+PUBLIC_SUBNET_IDS=$(terraform output -json public_subnet_ids | jq -r '.[]' | paste -sd, -)
+PRIVATE_SUBNET_IDS=$(terraform output -json private_subnet_ids | jq -r '.[]' | paste -sd, -)
 
 # Create the Kops cluster
 kops create cluster \
@@ -15,5 +16,5 @@ kops create cluster \
   --node-size=t3.medium \
   --control-plane-size=t3.medium \
   --network-id=${VPC_ID} \
-  --subnets=${SUBNET_IDS} \
+  --subnets=${PUBLIC_SUBNET_IDS},${PRIVATE_SUBNET_IDS} \
   --dns-zone=indojeans.in
