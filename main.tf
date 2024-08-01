@@ -27,6 +27,9 @@ variable "private_subnet_cidrs" {
   ]
 }
 
+# Availability zones data source
+data "aws_availability_zones" "available" {}
+
 # Create an S3 bucket for Kops state storage
 resource "aws_s3_bucket" "state_bucket" {
   bucket = "kops-indojeans-state-store"
@@ -38,8 +41,8 @@ resource "aws_s3_bucket" "state_bucket" {
 # Create a DynamoDB table for state locking
 resource "aws_dynamodb_table" "state_lock" {
   name           = "kops-state-lock"
-  billing_mode    = "PAY_PER_REQUEST"
-  hash_key        = "LockID"
+  billing_mode   = "PAY_PER_REQUEST"
+  hash_key       = "LockID"
   attribute {
     name = "LockID"
     type = "S"
@@ -93,7 +96,7 @@ resource "aws_internet_gateway" "gw" {
 
 # Create a NAT gateway for private subnets
 resource "aws_eip" "nat" {
-  vpc = true
+  domain = "vpc"
 }
 
 resource "aws_nat_gateway" "gw" {
@@ -144,7 +147,7 @@ resource "aws_route_table_association" "private" {
 resource "aws_vpc_endpoint" "s3" {
   vpc_id            = aws_vpc.main.id
   service_name      = "com.amazonaws.${var.region}.s3"
-  route_table_ids   = aws_route_table.private.*.id
+  route_table_ids   = aws_route_table.private[*].id
   tags = {
     Name = "kops-s3-endpoint"
   }
@@ -153,7 +156,7 @@ resource "aws_vpc_endpoint" "s3" {
 resource "aws_vpc_endpoint" "dynamodb" {
   vpc_id            = aws_vpc.main.id
   service_name      = "com.amazonaws.${var.region}.dynamodb"
-  route_table_ids   = aws_route_table.private.*.id
+  route_table_ids   = aws_route_table.private[*].id
   tags = {
     Name = "kops-dynamodb-endpoint"
   }
