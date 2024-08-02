@@ -8,7 +8,7 @@ VPC_ID=$(terraform output -json vpc_id | jq -r .)
 PRIVATE_SUBNET_IDS=$(terraform output -json private_subnet_ids | jq -r '.[]' | paste -sd, -)
 
 # Specify the path to your SSH public key
-SSH_PUBLIC_KEY_PATH=~/.ssh/my-key.pub
+SSH_PUBLIC_KEY_PATH=~/.ssh/id_rsa
 
 # Create the Kops cluster
 kops create cluster \
