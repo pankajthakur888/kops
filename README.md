@@ -7,6 +7,7 @@ Before you begin, make sure you have the following installed:
 - [Terraform](https://www.terraform.io/downloads.html)
 - [AWS CLI](https://aws.amazon.com/cli/)
 - [Kops](https://github.com/kubernetes/kops)
+- [AWS_IAM](https://kops.sigs.k8s.io/getting_started/aws/)
   
 ## Setup
 ```bash
