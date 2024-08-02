@@ -52,6 +52,20 @@ chmod +x kops_install.sh
 
  kubectl get node
 ```
+
+### The ELB created by kOps will expose the Kubernetes API trough "https" (configured on our ~/.kube/config file):
+```bash
+grep server ~/.kube/config
+```
+
+### ADDING A BASTION HOST TO OUR CLUSTER.¶
+We mentioned earlier that we can't add the "--bastion" argument to our "kops create cluster" command if we are using "gossip dns" (a fix it's on the way as we speaks). That forces us to add the bastion afterwards, once the cluster is up and running.
+
+Let's add a bastion here by using the following command:
+```bash
+kops create instancegroup bastions --role Bastion --subnet utility-ap-south-1a --name=kops.indojeans.in
+```
+
 ### Delete the Kops cluster and VPC
 
 ```bash
@@ -59,3 +73,4 @@ chmod +x kops_install.sh
 
  terraform destroy
 ```
+##### Note :- https://kops.sigs.k8s.io/topology/
