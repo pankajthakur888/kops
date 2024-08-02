@@ -12,6 +12,7 @@ SSH_PUBLIC_KEY_PATH=~/.ssh/my-key.pub
 
 # Create the Kops cluster
 kops create cluster \
+  --cloud=aws \
   --name=kops.indojeans.in \
   --state=${KOPS_STATE_STORE} \
   --master-zones=ap-south-1a,ap-south-1b,ap-south-1c \
