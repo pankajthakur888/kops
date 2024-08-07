@@ -15,9 +15,9 @@ kops create cluster \
   --cloud=aws \
   --name=kops.indojeans.in \
   --state=${KOPS_STATE_STORE} \
-  --master-zones=ap-south-1a,ap-south-1b,ap-south-1c \
-  --zones=ap-south-1a,ap-south-1b,ap-south-1c \
-  --node-count=3 \
+  --master-zones=us-east-1a,us-east-1b,us-east-1c \
+  --zones=us-east-1a,us-east-1b,us-east-1c \
+  --node-count=2 \
   --topology private \
   --networking kopeio-vxlan \
   --node-size=t3.medium \
