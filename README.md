@@ -38,19 +38,16 @@ terraform validate
 terraform apply
 ```
 
-### Create the Kops cluster
-
-Make the script executable and run it:
+### Create the Kops Cluster:
+Create the Kops Cluster:
 ```bash
-chmod +x kops_install.sh
+kops create -f cluster-az.yaml
 
-./kops_install.sh
+```
+### Update the Kops Cluster:
+```bash
+kops create -f cluster-az.yaml
 
- kops update cluster --name=kops.indojeans.in --state=s3://kops-indojeans-state-store --yes --admin
-
- kops validate cluster --name=kops.indojeans.in --state=s3://kops-indojeans-state-store
-
- kubectl get node
 ```
 
 ### The ELB created by kOps will expose the Kubernetes API trough "https" (configured on our ~/.kube/config file):
