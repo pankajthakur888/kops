@@ -1,0 +1,149 @@
+apiVersion: kops.k8s.io/v1alpha2
+kind: Cluster
+metadata:
+  name: mycluster.k8s.local
+spec:
+  api:
+    loadBalancer:
+      type: Public
+  authorization:
+    rbac: {}
+  channel: stable
+  cloudProvider: aws
+  configBase: s3://kops-indojeans-state-store-us/mycluster.k8s.local
+  etcdClusters:
+  - etcdMembers:
+    - instanceGroup: master-us-east-1a
+      name: a
+    - instanceGroup: master-us-east-1b
+      name: b
+    - instanceGroup: master-us-east-1c
+      name: c
+    name: main
+  - etcdMembers:
+    - instanceGroup: master-us-east-1a
+      name: a
+    - instanceGroup: master-us-east-1b
+      name: b
+    - instanceGroup: master-us-east-1c
+      name: c
+    name: events
+  iam:
+    allowContainerRegistry: true
+    legacy: false
+  kubeAPIServer:
+    admissionControl:
+    - NamespaceLifecycle
+    - LimitRanger
+    - ServiceAccount
+    - PersistentVolumeLabel
+    - DefaultStorageClass
+    - ResourceQuota
+  kubernetesVersion: 1.22.0
+  masterPublicName: api.mycluster.k8s.local
+  networkCIDR: 10.0.0.0/16
+  networking:
+    amazonvpc: {}
+  nonMasqueradeCIDR: 100.64.0.0/10
+  sshAccess:
+  - 0.0.0.0/0
+  subnets:
+  - cidr: 10.0.1.0/24
+    name: us-east-1a
+    type: Public
+    zone: us-east-1a
+  - cidr: 10.0.2.0/24
+    name: us-east-1b
+    type: Public
+    zone: us-east-1b
+  - cidr: 10.0.3.0/24
+    name: us-east-1c
+    type: Public
+    zone: us-east-1c
+  - cidr: 10.0.4.0/24
+    name: private-us-east-1a
+    type: Private
+    zone: us-east-1a
+  - cidr: 10.0.5.0/24
+    name: private-us-east-1b
+    type: Private
+    zone: us-east-1b
+  - cidr: 10.0.6.0/24
+    name: private-us-east-1c
+    type: Private
+    zone: us-east-1c
+  topology:
+    dns:
+      type: Public
+    masters: private
+    nodes: private
+---
+apiVersion: kops.k8s.io/v1alpha2
+kind: InstanceGroup
+metadata:
+  labels:
+    kops.k8s.io/cluster: mycluster.k8s.local
+  name: master-us-east-1a
+spec:
+  instanceRole: Master
+  machineType: t3.medium
+  maxSize: 1
+  minSize: 1
+  nodeLabels:
+    kops.k8s.io/instancegroup: master-us-east-1a
+  role: Master
+  subnets:
+  - us-east-1a
+---
+apiVersion: kops.k8s.io/v1alpha2
+kind: InstanceGroup
+metadata:
+  labels:
+    kops.k8s.io/cluster: mycluster.k8s.local
+  name: master-us-east-1b
+spec:
+  instanceRole: Master
+  machineType: t3.medium
+  maxSize: 1
+  minSize: 1
+  nodeLabels:
+    kops.k8s.io/instancegroup: master-us-east-1b
+  role: Master
+  subnets:
+  - us-east-1b
+---
+apiVersion: kops.k8s.io/v1alpha2
+kind: InstanceGroup
+metadata:
+  labels:
+    kops.k8s.io/cluster: mycluster.k8s.local
+  name: master-us-east-1c
+spec:
+  instanceRole: Master
+  machineType: t3.medium
+  maxSize: 1
+  minSize: 1
+  nodeLabels:
+    kops.k8s.io/instancegroup: master-us-east-1c
+  role: Master
+  subnets:
+  - us-east-1c
+---
+apiVersion: kops.k8s.io/v1alpha2
+kind: InstanceGroup
+metadata:
+  labels:
+    kops.k8s.io/cluster: mycluster.k8s.local
+  name: nodes
+spec:
+  instanceRole: Node
+  machineType: t3.medium
+  maxSize: 3
+  minSize: 3
+  nodeLabels:
+    kops.k8s.io/instancegroup: nodes
+  role: Node
+  subnets:
+  - us-east-1a
+  - us-east-1b
+  - us-east-1c
