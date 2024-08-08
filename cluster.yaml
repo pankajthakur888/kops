@@ -1,38 +1,101 @@
 apiVersion: kops.k8s.io/v1alpha2
 kind: Cluster
 metadata:
-  name: cluster-a1.k8s.local
+  creationTimestamp: null
+  name: kops.indojeans.in
 spec:
-  kubernetesVersion: "1.29.0"
-  cloudProvider: aws
   api:
     loadBalancer:
-      type: Internal
-  networking:
-    amazonvpc:
-      vpcId: ${aws_vpc.main.id}
-      subnets:
-      - cidr: ${aws_subnet.public[0].cidr_block}
-        name: PublicSubnet1
-        type: Public
-        zone: ${data.aws_availability_zones.available.names[0]}
-      - cidr: ${aws_subnet.private[0].cidr_block}
-        name: PrivateSubnet1
-        type: Private
-        zone: ${data.aws_availability_zones.available.names[0]}
+      class: Network
+      type: Public
+  authorization:
+    rbac: {}
+  channel: stable
+  cloudProvider: aws
+  configBase: s3://kops-indojeans-state-store-us/kops.indojeans.in
   etcdClusters:
-  - name: main
-    version: "1.29.0"
-    etcds:
-    - name: etcd-0
-  - name: events
-    version: "1.29.0"
-    etcds:
-    - name: etcd-0
-  kubeAPIServer:
-    accessStrings:
-    - "0.0.0.0/0"
-  kubeControllerManager:
-    cpuRequest: 100m
-  kubeScheduler:
-    cpuRequest: 100m
+  - cpuRequest: 200m
+    etcdMembers:
+    - encryptedVolume: true
+      instanceGroup: control-plane-us-east-1a
+      name: a
+    manager:
+      backupRetentionDays: 90
+    memoryRequest: 100Mi
+    name: main
+  - cpuRequest: 100m
+    etcdMembers:
+    - encryptedVolume: true
+      instanceGroup: control-plane-us-east-1a
+      name: a
+    manager:
+      backupRetentionDays: 90
+    memoryRequest: 100Mi
+    name: events
+  iam:
+    allowContainerRegistry: true
+    legacy: false
+  kubeProxy:
+    enabled: false
+  kubelet:
+    anonymousAuth: false
+  kubernetesApiAccess:
+  - 0.0.0.0/0
+  - ::/0
+  kubernetesVersion: 1.29.6
+  networkCIDR: 10.20.0.0/16
+  networking:
+    cilium:
+      enableNodePort: true
+  nonMasqueradeCIDR: 100.64.0.0/10
+  sshAccess:
+  - 0.0.0.0/0
+  - ::/0
+  subnets:
+  - cidr: 10.20.128.0/17
+    name: us-east-1a
+    type: Private
+    zone: us-east-1a
+  - cidr: 10.20.0.0/20
+    name: utility-us-east-1a
+    type: Utility
+    zone: us-east-1a
+  topology:
+    dns:
+      type: None
+
+---
+
+apiVersion: kops.k8s.io/v1alpha2
+kind: InstanceGroup
+metadata:
+  creationTimestamp: null
+  labels:
+    kops.k8s.io/cluster: kops.indojeans.in
+  name: control-plane-us-east-1a
+spec:
+  image: 099720109477/ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-20240607
+  machineType: t3.medium
+  maxSize: 1
+  minSize: 1
+  role: Master
+  subnets:
+  - us-east-1a
+
+---
+
+apiVersion: kops.k8s.io/v1alpha2
+kind: InstanceGroup
+metadata:
+  creationTimestamp: null
+  labels:
+    kops.k8s.io/cluster: kops.indojeans.in
+  name: nodes-us-east-1a
+spec:
+  image: 099720109477/ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-20240607
+  machineType: t3.medium
+  maxSize: 2
+  minSize: 2
+  role: Node
+  subnets:
+  - us-east-1a
