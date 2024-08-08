@@ -63,6 +63,21 @@ Let's add a bastion here by using the following command:
 kops create instancegroup bastions --role Bastion --subnet utility-ap-south-1a --name=kops.indojeans.in
 ```
 
+### Installing Helm
+
+```bash
+curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+chmod 700 get_helm.sh
+./get_helm.sh
+```
+
+### Let’s install the Driver:
+```bash
+helm repo add aws-efs-csi-driver https://kubernetes-sigs.github.io/aws-efs-csi-driver/
+helm repo update
+helm upgrade --install aws-efs-csi-driver --namespace kube-system aws-efs-csi-driver/aws-efs-csi-driver
+```
+
 ### Delete the Kops cluster and VPC
 
 ```bash
@@ -70,4 +85,5 @@ kops create instancegroup bastions --role Bastion --subnet utility-ap-south-1a -
 
  terraform destroy
 ```
+
 ##### Note :- https://kops.sigs.k8s.io/topology/
