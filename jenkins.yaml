@@ -1,0 +1,109 @@
+---
+# StorageClass
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: efs-sc
+provisioner: efs.csi.aws.com
+
+---
+# PersistentVolume
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: jenkins-pv-efs
+spec:
+  storageClassName: efs-sc
+  capacity:
+    storage: 12Gi
+  accessModes:
+    - ReadWriteMany
+  volumeMode: Filesystem
+  persistentVolumeReclaimPolicy: Retain
+  csi:
+    driver: efs.csi.aws.com
+    volumeHandle: fs-01c9fdcc5d40b18cf.efs.us-east-1.amazonaws.com  # Replace with your EFS volume and access point IDs
+
+---
+# PersistentVolumeClaim
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: jenkins-pvc-efs
+  namespace: jenkins
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 12Gi
+  storageClassName: efs-sc
+
+---
+# Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jenkins-master
+  namespace: jenkins
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jenkins-master
+  template:
+    metadata:
+      labels:
+        app: jenkins-master
+    spec:
+      serviceAccountName: jenkins-master
+      securityContext:
+        fsGroup: 1000
+      initContainers:
+        - name: init-jenkins-home
+          image: busybox
+          command: ["sh", "-c", "chown -R 1000:1000 /var/jenkins_home"]
+          volumeMounts:
+            - name: jenkins-home
+              mountPath: /var/jenkins_home
+      containers:
+        - name: jenkins
+          image: jenkins/jenkins:lts
+          securityContext:
+            runAsUser: 1000
+          env:
+            - name: JAVA_OPTS
+              value: "-Djenkins.install.runSetupWizard=false"
+          ports:
+            - name: http-port
+              containerPort: 8080
+            - name: jnlp-port
+              containerPort: 50000
+          volumeMounts:
+            - name: jenkins-home
+              mountPath: /var/jenkins_home
+      volumes:
+        - name: jenkins-home
+          persistentVolumeClaim:
+            claimName: jenkins-pvc-efs
+
+---
+# Services
+apiVersion: v1
+kind: Service
+metadata:
+  name: jenkins-master-loadbalancer
+  namespace: jenkins
+spec:
+  type: LoadBalancer
+  selector:
+    app: jenkins-master
+  ports:
+    - name: jenkins-http
+      protocol: TCP
+      port: 80
+      targetPort: 8080
+    - name: jenkins-jnlp
+      protocol: TCP
+      port: 50000
+      targetPort: 50000
