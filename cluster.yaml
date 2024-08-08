@@ -1,0 +1,90 @@
+apiVersion: kops/v1alpha2
+kind: Cluster
+metadata:
+  name: your-cluster-name.k8s.local
+spec:
+  cloudProvider: aws
+  kubernetesVersion: "1.23.0"  # Adjust the version as needed
+  masterPublicName: api.your-cluster-name.k8s.local
+  networkCIDR: 10.0.0.0/16
+  networking:
+    kubenet: {}
+  topology:
+    dns:
+      type: Public
+    masters: private
+    nodes: private
+  subnets:
+  - cidr: 10.0.1.0/24
+    name: us-east-1a
+    type: Private
+    zone: us-east-1a
+  - cidr: 10.0.2.0/24
+    name: utility-us-east-1a
+    type: Utility
+    zone: us-east-1a
+  api:
+    loadBalancer:
+      type: Internal
+  authorization:
+    rbac: {}
+  etcdClusters:
+  - etcdMembers:
+    - instanceGroup: master-us-east-1a
+      name: a
+    name: main
+  - etcdMembers:
+    - instanceGroup: master-us-east-1a
+      name: a
+    name: events
+  iam:
+    allowContainerRegistry: true
+    legacy: false
+  kubeAPIServer:
+    runtimeConfig:
+      admissionregistration.k8s.io/v1alpha1: "true"
+  kubelet:
+    anonymousAuth: false
+  masterInternalName: api.internal.your-cluster-name.k8s.local
+  sshAccess:
+  - 0.0.0.0/0
+  subnets:
+  - cidr: 10.0.1.0/24
+    name: us-east-1a
+    type: Private
+    zone: us-east-1a
+  - cidr: 10.0.2.0/24
+    name: utility-us-east-1a
+    type: Utility
+    zone: us-east-1a
+  topology:
+    dns:
+      type: Public
+    masters: private
+    nodes: private
+---
+apiVersion: kops/v1alpha2
+kind: InstanceGroup
+metadata:
+  name: master-us-east-1a
+spec:
+  image: kope.io/k8s-1.23-debian-jessie-amd64-hvm-ebs-2021-03-23
+  machineType: t3.medium
+  maxSize: 1
+  minSize: 1
+  role: Master
+  subnets:
+  - us-east-1a
+---
+apiVersion: kops/v1alpha2
+kind: InstanceGroup
+metadata:
+  name: nodes
+spec:
+  image: kope.io/k8s-1.23-debian-jessie-amd64-hvm-ebs-2021-03-23
+  machineType: t3.medium
+  maxSize: 2
+  minSize: 2
+  role: Node
+  subnets:
+  - us-east-1a
