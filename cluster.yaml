@@ -71,7 +71,7 @@ metadata:
   labels:
     kops.k8s.io/cluster: kops-indojeans.k8s.local
 spec:
-  image: kope.io/k8s-1.29-debian-jessie-amd64-hvm-ebs-2021-03-23
+  image: kope.io/k8s-1.29-debian-jessie-amd64-hvm-ebs-2024-01-01
   machineType: t3.medium
   maxSize: 1
   minSize: 1
@@ -86,7 +86,7 @@ metadata:
   labels:
     kops.k8s.io/cluster: kops-indojeans.k8s.local
 spec:
-  image: kope.io/k8s-1.29-debian-jessie-amd64-hvm-ebs-2021-03-23
+  image: kope.io/k8s-1.29-debian-jessie-amd64-hvm-ebs-2024-01-01
   machineType: t3.medium
   maxSize: 2
   minSize: 2
