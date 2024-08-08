@@ -41,12 +41,12 @@ terraform apply
 ### Create the Kops Cluster:
 Create the Kops Cluster:
 ```bash
-kops create -f cluster-az.yaml
+kops create -f cluster.yaml --state=s3://kops-indojeans-state-store-us
 
 ```
 ### Update the Kops Cluster:
 ```bash
-kops create -f cluster-az.yaml
+kops create -f cluster-az.yaml --state=s3://kops-indojeans-state-store-us --yes --admin
 
 ```
 
