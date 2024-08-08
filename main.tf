@@ -32,9 +32,9 @@ data "aws_availability_zones" "available" {}
 
 # Create an S3 bucket for Kops state storage
 resource "aws_s3_bucket" "state_bucket" {
-  bucket = "kops-indojeans-state-store"
+  bucket = "kops-indojeans-state-store-us"
   tags = {
-    Name = "kops-indojeans-state-store"
+    Name = "kops-indojeans-state-store-us"
   }
 }
 
